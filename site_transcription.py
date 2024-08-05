@@ -14,17 +14,17 @@ import toml
 #configuração 
 config = toml.load("config.toml")
 
-api_key = st.secrets.api_key.google
-api_key_gemini = st.secrets.api_key_gemini.google
+api_key_groq = st.secrets.api_key.api_key1
+api_key_gemini = st.secrets.api_key_gemini.api_key2
 
 
 # Configuração da API Groq
-#api_key = "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"
-client = Groq(api_key=api_key)
+
+client = Groq(api_key=api_key_groq)
 model = 'whisper-large-v3'
 
 # Configuração da API Gemini
-#api_key_gemini = "AIzaSyDWnRq7MoCV3vzH98FmMLuVFFU7aOxnLdQ"
+
 genai.configure(api_key=api_key_gemini)
 
 generation_config = {
