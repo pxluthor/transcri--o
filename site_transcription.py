@@ -13,6 +13,17 @@ from docx import Document
 from fpdf import FPDF
 import toml
 
+from pydub import AudioSegment
+from pydub.utils import which
+
+
+# Instalar ffmpeg se não estiver presente
+os.system("apt-get update && apt-get install -y ffmpeg")
+
+# Certifique-se de que o pydub encontra ffmpeg e ffprobe
+AudioSegment.converter = which("ffmpeg")
+AudioSegment.ffmpeg = which("ffmpeg")
+AudioSegment.ffprobe = which("ffprobe")
 #configuração 
 #config = toml.load("config.toml")
 
