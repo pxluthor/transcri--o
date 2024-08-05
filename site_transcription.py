@@ -68,11 +68,14 @@ def audio_chunk_to_text(chunk, model, client):
 
 def transcribe_audio(filepath, model, client):
     chunks = split_audio(filepath)
-    full_transcription = []
+    full_transcription = []#incluido
+    status_text = st.empty()# incluido
     for i, chunk in enumerate(chunks):
-        st.write(f"Transcrevendo parte {i + 1} de {len(chunks)}...")
+        status_text.text(f"Transcrevendo parte {i + 1} de {len(chunks)}...")
+        #st.write(f"Transcrevendo parte {i + 1} de {len(chunks)}...")
         text = audio_chunk_to_text(chunk, model, client)
         full_transcription.append(text)
+        status_text.text("Transcrição completa!")
     return full_transcription
 
 
@@ -174,13 +177,21 @@ def main():
                 transcription = transcribe_audio(st.session_state.file_path, model, client)
                 formatted_transcription = transcription
 
-                prompt2 = f'''Você trabalha na Leste telecom, o seu trabalho é realizar a transcrição de conversas identificando e transcrevendo a fala de cada interlocutor. 
-                            Revise a conversa: {formatted_transcription} para que a transcrição retorne a fala correta do atendente e cliente. Responda sempre em português do Brasil.'''
+                prompt2 = f'''Responda sempre em português do Brasil. 
+                            Você trabalha na Leste telecom, o seu trabalho é realizar a transcrição de conversas identificando e transcrevendo a fala de cada interlocutor. 
+                            Revise a conversa de acordo com o contexto:{formatted_transcription}. Retorne também o tempo de cada fala. como no exemplo:
+                            tempo: (início da fala).
+                            cliente: (fala do cliente)
+                            atendente: (fala do atendente)
+                            retorne conforme o modelo de exemplo. 
+                            Use quebras de linha se necesário.
+                            '''
                 
                 resp = model_g.generate_content(prompt2)
                 response_final = resp.text
-
+                
                 with st.chat_message("assistente"):
+                    st.spinner('Revisando a transcrição...')
                     st.markdown(response_final)
                     st.session_state.chat.append({"role": "assistente", "text": response_final})
 
@@ -230,6 +241,7 @@ def main():
 
 def limpar_chat():
     st.session_state.chat = []
+    st.session_state.file_path = []
     st.session_state.transcricao_feita = False
     if os.path.exists("audio_temp.mp3"):
         os.remove("audio_temp.mp3")
