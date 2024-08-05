@@ -67,7 +67,7 @@ markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 marshmallow==3.21.3
 ffmpeg
-
+ffprobe
 mdurl==0.1.2
 more-itertools==10.3.0
 mpmath==1.3.0
