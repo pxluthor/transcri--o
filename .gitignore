@@ -1,0 +1,12 @@
+env/
+mp3_chunks/
+output-medium/
+mp3-files/
+__pycache__/
+42m.mp3
+audio_12m.mp3
+audio_temp.mp3
+audio19m.mp3
+teste07.py 
+teste8.py 
+
