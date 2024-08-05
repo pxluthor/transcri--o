@@ -1,22 +1,23 @@
+#from reportlab.lib.units import cm
+#from reportlab.lib.pagesizes import A4
+#from reportlab.pdfgen import canvas
+#from pathlib import Path
+
+
 import os
 import streamlit as st
-#from pathlib import Path
 from pydub import AudioSegment
 from groq import Groq
 import google.generativeai as genai
-#from reportlab.pdfgen import canvas
 from docx import Document
-#from reportlab.lib.units import cm
-#from reportlab.lib.pagesizes import A4
 from fpdf import FPDF
 import toml
 
 #configuração 
-config = toml.load("config.toml")
+#config = toml.load("config.toml")
 
-api_key_groq = st.secrets.api_key.api_key1
-api_key_gemini = st.secrets.api_key_gemini.api_key2
-
+api_key_groq = st.secrets["api_keys"]["api_key2"]
+api_key_gemini = st.secrets["api_keys"]["api_key1"]
 
 # Configuração da API Groq
 

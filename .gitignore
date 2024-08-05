@@ -1,5 +1,5 @@
 env/
-mp3_chunks/
+mp3-chunks/
 output-medium/
 mp3-files/
 __pycache__/
