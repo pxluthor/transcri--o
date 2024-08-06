@@ -244,7 +244,7 @@ def main():
                   #  st.session_state.chat.append({"role": "assistente", "text": response_final})
 
                 try:
-                    resp = model_g.generate_content(prompt3)
+                    resp = model_g.generate_content(prompt2)
                     response_final = resp.text  # pode causar ValueError se nenhum texto for retornado
                 except ValueError as e:
                     st.error("Erro ao processar a resposta do modelo Gemini. Usando o modelo Groq para a transcrição.")    
