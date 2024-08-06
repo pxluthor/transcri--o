@@ -26,7 +26,7 @@ AudioSegment.ffmpeg = which("ffmpeg")
 AudioSegment.ffprobe = which("ffprobe")
 
 #chaves API
-api_key_groq = st.secrets["api_keys"]["api_key3"]
+api_key_groq = st.secrets["api_keys"]["api_key4"]
 api_key_gemini = st.secrets["api_keys"]["api_key1"]
 
 # Configuração da API Groq whisper
@@ -208,6 +208,7 @@ def main():
             if not st.session_state.transcricao_feita and st.button("Fazer transcrição"):
                 st.session_state.file_path = "audio_temp.mp3"
                 transcription = transcribe_audio(st.session_state.file_path, model, client)
+                st.write("Processando transcrição ...")
                 formatted_transcription = transcription
 
                 prompt2 = f'''Responda sempre em português do Brasil. 
