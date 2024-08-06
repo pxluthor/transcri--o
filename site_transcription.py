@@ -222,14 +222,53 @@ def main():
                             interlocutor2: (fala do interlocutor)(\n).
                             Retorne a resposta da transcrição conforme o modelo apresentado. 
                             Use quebras de linha se necesário.
-                            '''
-                
-                resp = model_g.generate_content(prompt2)
-                response_final = resp.text
 
-                with st.chat_message("assistente"):
-                    st.markdown(response_final)
-                    st.session_state.chat.append({"role": "assistente", "text": response_final})
+                            contexto:
+                            O cliente entra em contato por telefone com a central da Leste telecom, geralmente quem inicia a conversa é o atendente que faz a saudação e 
+                            pergunta como pode ajudar. 
+                            '''
+                prompt3 = f'''Responda sempre em português do Brasil. 
+                        Você trabalha na Leste telecom, empresa de internet, realize a transcrição completa de conversa que vem em uma lista: {formatted_transcription} identificando a fala de cada interlocutor. 
+                        Revise a conversa de acordo com o contexto. Retorne também o tempo correto de cada fala.      
+
+
+                        contexto:
+                        O cliente entra em contato por telefone com a central da Leste telecom, geralmente quem inicia a conversa é o atendente que faz a saudação e 
+                        pergunta como pode ajudar. Utilize quebra de linha se necessário. 
+                    '''
+                #resp = model_g.generate_content(prompt2)
+                #response_final = resp.text
+
+                #with st.chat_message("assistente"):
+                 #   st.markdown(response_final)
+                  #  st.session_state.chat.append({"role": "assistente", "text": response_final})
+
+                try:
+                    resp = model_g.generate_content(prompt3)
+                    response_final = resp.text  # pode causar ValueError se nenhum texto for retornado
+                except ValueError as e:
+                    st.error("Erro ao processar a resposta do modelo Gemini. Usando o modelo Groq para a transcrição.")    
+
+                    
+    
+                        # Requisição para o modelo Groq
+                    response_final = client.chat.completions.create(
+                    messages=[{"role": "user", "content": prompt3}],
+                    model="llama3-70b-8192"
+                    ).choices[0].message.content
+
+                    with st.chat_message("assistente"):
+                        st.write("resposta Groq")
+                        st.markdown(response_final)
+                        st.session_state.chat.append({"role": "assistente", "text": response_final})
+
+                else:
+                        # Se o Gemini retornar resposta sem erro, use a resposta do Gemini
+
+                    with st.chat_message("assistente"):
+                        st.write("resposta Gemini")
+                        st.markdown(response_final)
+                        st.session_state.chat.append({"role": "assistente", "text": response_final})
 
 
 
