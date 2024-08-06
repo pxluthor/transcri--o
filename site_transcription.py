@@ -203,14 +203,15 @@ def main():
                 formatted_transcription = transcription
 
                 prompt2 = f'''Responda sempre em português do Brasil. 
-                            Você trabalha na Leste telecom, o seu trabalho é realizar a transcrição de conversas identificando e transcrevendo a fala de cada interlocutor. 
-                            Revise a conversa de acordo com o contexto:{formatted_transcription}. Retorne também o tempo de cada fala. como no exemplo:
-                            MOdelo:
-                            tempo de fala
-                            cliente: (fala do cliente)(\n)
-                            atendente: (fala do atendente)(\n).
+                            Você trabalha na Leste telecom, o seu trabalho é realizar a transcrição de conversas identificando, transcrevendo e fazendo correções 
+                            de algumas palavras dentro do contexto da fala de cada interlocutor. 
+                            Revise a conversa de acordo com o contexto:{formatted_transcription}. Retorne também o tempo correto de cada fala. como no exemplo:
+                            Modelo:
 
-                            retorne conforme o modelo apresentado. 
+                            tempo de fala
+                            (atendente ou cliente): (fala do interlocutor)(\n).
+                            (atendente ou cliente): (fala do interlocutor)(\n)
+                            retorne a resposta da transcrição conforme o modelo apresentado. 
                             Use quebras de linha se necesário.
                             '''
                 
