@@ -259,9 +259,9 @@ def main():
                 else:
                         # Se o Gemini retornar resposta sem erro, use a resposta do Gemini
 
-                with st.chat_message("assistente"):
-                    st.markdown(response_final)
-                    st.session_state.chat.append({"role": "assistente", "text": response_final})
+                    with st.chat_message("assistente"):
+                        st.markdown(response_final)
+                        st.session_state.chat.append({"role": "assistente", "text": response_final})
 
                 # Botões de exportação
                 pdf_file = export_to_pdf(response_final.splitlines())
