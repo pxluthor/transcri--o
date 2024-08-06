@@ -247,7 +247,7 @@ def main():
     
                         # Requisição para o modelo Groq
                     response_final = client.chat.completions.create(
-                    messages=[{"role": "user", "content": prompt3}],
+                    messages=[{"role": "user", "content": prompt2}],
                     model="llama3-70b-8192"
                     ).choices[0].message.content
 
