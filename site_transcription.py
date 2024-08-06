@@ -230,7 +230,15 @@ def main():
                             '''
                 prompt3 = f'''Responda sempre em português do Brasil. 
                         Você trabalha na Leste telecom, empresa de internet, realize a transcrição completa de conversa que vem em uma lista: {formatted_transcription} identificando a fala de cada interlocutor. 
-                        Revise a conversa de acordo com o contexto. Retorne também o tempo correto de cada fala.      
+                        Revise a conversa de acordo com o contexto. Retorne também o tempo correto de cada fala.  
+
+                        Modelo:
+                            tempo de fala -
+                            interlocutor1: (fala do interlocutor)(\n).
+                            tempo de fala -
+                            interlocutor2: (fala do interlocutor)(\n).
+                            Retorne a resposta da transcrição conforme o modelo apresentado. 
+                            Use quebras de linha se necesário.    
 
 
                         contexto:
