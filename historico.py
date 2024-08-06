@@ -17,19 +17,20 @@ from pydub import AudioSegment
 from pydub.utils import which
 
 
-# Instala ffmpeg se não estiver presente
+# Instalar ffmpeg se não estiver presente
 os.system("apt-get update && apt-get install -y ffmpeg")
 
-# Certifica de que o pydub encontra ffmpeg e ffprobe
+# Certifique-se de que o pydub encontra ffmpeg e ffprobe
 AudioSegment.converter = which("ffmpeg")
 AudioSegment.ffmpeg = which("ffmpeg")
 AudioSegment.ffprobe = which("ffprobe")
+#configuração 
+#config = toml.load("config.toml")
 
-#chaves API
 api_key_groq = st.secrets["api_keys"]["api_key2"]
 api_key_gemini = st.secrets["api_keys"]["api_key1"]
 
-# Configuração da API Groq whisper
+# Configuração da API Groq
 
 client = Groq(api_key=api_key_groq)
 model = 'whisper-large-v3'
@@ -37,6 +38,7 @@ model = 'whisper-large-v3'
 # Configuração da API Gemini
 
 genai.configure(api_key=api_key_gemini)
+
 generation_config = {
     "temperature": 0.3,
     "top_p": 0.95,
@@ -48,39 +50,32 @@ generation_config = {
 model_g = genai.GenerativeModel(model_name='models/gemini-1.5-flash-latest', generation_config=generation_config)
 
 # Função para dividir o áudio
-def split_audio(filepath, chunk_length_ms=180000): # 3 minutos
-    audio = AudioSegment.from_file(filepath)  # segmento de audio
+def split_audio(filepath, chunk_length_ms=180000):
+    audio = AudioSegment.from_file(filepath)
     chunks = [audio[i:i + chunk_length_ms] for i in range(0, len(audio), chunk_length_ms)]
     return chunks
 
-# converte chunk para texto.
 def audio_chunk_to_text(chunk, model, client):
     temp_filename = "temp_chunk.mp3"
     chunk.export(temp_filename, format="mp3")
-
     with open(temp_filename, "rb") as file:
         translation = client.audio.transcriptions.create(
             file=(temp_filename, file.read()),
             model=model,
         )
-
     os.remove(temp_filename)
     return translation.text
 
-#função que transcreve o audio
 def transcribe_audio(filepath, model, client):
     chunks = split_audio(filepath)
     full_transcription = []
-    status_text = st.empty()
     for i, chunk in enumerate(chunks):
-        status_text.text(f"Transcrevendo parte {i + 1} de {len(chunks)}...")
+        st.write(f"Transcrevendo parte {i + 1} de {len(chunks)}...")
         text = audio_chunk_to_text(chunk, model, client)
         full_transcription.append(text)
-        status_text.text("Transcrição completa!")
     return full_transcription
 
 
-# função exportar PDF
 def export_to_pdf(transcription):
     pdf = FPDF()
     pdf.add_page()
@@ -92,8 +87,6 @@ def export_to_pdf(transcription):
     pdf.output(pdf_file)
     return pdf_file
 
-
-# função exportar PDF
 def export_to_docx(transcription):
     doc = Document()
     for line in transcription:
@@ -101,7 +94,6 @@ def export_to_docx(transcription):
     doc_file = "transcription.docx"
     doc.save(doc_file)
     return doc_file
-
 
 def role_to_streamlit(role):
     return "assistente" if role == "model" else role
@@ -135,14 +127,10 @@ def main():
 
     if "chat" not in st.session_state:
         st.session_state.chat = []
-        st.session_state.history = []
-
-  
 
     for message in st.session_state.chat:
-        role = "user" if message["role"] == "user" else "assistant"
-        with st.chat_message(role):
-            st.markdown(message['text'])        
+        with st.chat_message(role_to_streamlit(message['role'])):
+            st.markdown(message['text'])
 
     opcao_entrada = st.sidebar.radio("Selecione o tipo de entrada:", ("Texto", "Áudio"))
     
@@ -150,31 +138,18 @@ def main():
         
         if prompt := st.chat_input("Como posso ajudar?"): 
             st.session_state.chat.append({"role": "user", "text": prompt})
-            st.session_state.history.append({"role": "user", "content": prompt})
-
-            # exibe a mensagem do user
-            with st.chat_message("user"):
-                st.markdown(prompt)
-
-            #processamento da pergunta do usuário
             response = client.chat.completions.create(
-                messages=st.session_state.history,
-                model="llama3-8b-8192"
+                messages=[{"role": "user", "content": prompt}],
+                model="llama3-70b-8192"
             )
-            response_text = response.choices[0].message.content # resposta da IA
-
-            #Adiciona as mensagens no chat e no histórico
-            st.session_state.chat.append({"role": "assistente", "text": response_text})
-            st.session_state.history.append({"role": "assistant", "content": response_text})
-
-            # exibe a resposta da IA
+            response_text = response.choices[0].message.content
             with st.chat_message("assistente"):
                 st.markdown(response_text)
-                
-    else:
-        #botão upload
-        arquivo_carregado = st.file_uploader("Carregar arquivo de áudio (MP3)")
+                st.session_state.chat.append({"role": "assistente", "text": response_text})
+            
 
+    else:
+        arquivo_carregado = st.file_uploader("Carregar arquivo de áudio (MP3)")
         if arquivo_carregado:
             st.sidebar.markdown("# PLAY AUDIO 🔉 ")
 
@@ -202,17 +177,8 @@ def main():
                 transcription = transcribe_audio(st.session_state.file_path, model, client)
                 formatted_transcription = transcription
 
-                prompt2 = f'''Responda sempre em português do Brasil. 
-                            Você trabalha na Leste telecom, o seu trabalho é realizar a transcrição de conversas identificando e transcrevendo a fala de cada interlocutor. 
-                            Revise a conversa de acordo com o contexto:{formatted_transcription}. Retorne também o tempo de cada fala. como no exemplo:
-                            MOdelo:
-                            tempo de fala
-                            cliente: (fala do cliente)(\n)
-                            atendente: (fala do atendente)(\n).
-
-                            retorne conforme o modelo apresentado. 
-                            Use quebras de linha se necesário.
-                            '''
+                prompt2 = f'''Você trabalha na Leste telecom, o seu trabalho é realizar a transcrição de conversas identificando e transcrevendo a fala de cada interlocutor. 
+                            Revise a conversa: {formatted_transcription} para que a transcrição retorne a fala correta do atendente e cliente. Responda sempre em português do Brasil.'''
                 
                 resp = model_g.generate_content(prompt2)
                 response_final = resp.text
@@ -267,7 +233,6 @@ def main():
 
 def limpar_chat():
     st.session_state.chat = []
-    st.session_state.history = []
     st.session_state.transcricao_feita = False
     if os.path.exists("audio_temp.mp3"):
         os.remove("audio_temp.mp3")
