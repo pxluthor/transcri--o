@@ -38,7 +38,7 @@ model = 'whisper-large-v3'
 
 genai.configure(api_key=api_key_gemini)
 generation_config = {
-    "temperature": 0.3,
+    "temperature": 0.5,
     "top_p": 0.95,
     "top_k": 64,
     "max_output_tokens": 8192,
@@ -62,6 +62,8 @@ def audio_chunk_to_text(chunk, model, client):
         translation = client.audio.transcriptions.create(
             file=(temp_filename, file.read()),
             model=model,
+            prompt="realize a transcrição retornando também o tempo",
+            language="pt"
         )
 
     os.remove(temp_filename)
@@ -206,13 +208,18 @@ def main():
                             Você trabalha na Leste telecom, o seu trabalho é realizar a transcrição de conversas identificando, transcrevendo e fazendo correções 
                             de algumas palavras dentro do contexto da fala de cada interlocutor. 
                             Revise a conversa de acordo com o contexto:{formatted_transcription}. Retorne também o tempo correto de cada fala. como no exemplo:
-                            Modelo:
 
-                            tempo de fala
-                            (atendente ou cliente): (fala do interlocutor)(\n).
-                            (atendente ou cliente): (fala do interlocutor)(\n)
-                            retorne a resposta da transcrição conforme o modelo apresentado. 
+                            Modelo:
+                            tempo de fala -
+                            interlocutor1: (fala do interlocutor)(\n).
+                            tempo de fala -
+                            interlocutor2: (fala do interlocutor)(\n).
+                            Retorne a resposta da transcrição conforme o modelo apresentado. 
                             Use quebras de linha se necesário.
+
+                            contexto:
+                            O cliente entra em contato por telefone com a central da Leste telecom, geralmente quem inicia a conversa é o atendente que faz a saudação e 
+                            pergunta como pode ajudar. 
                             '''
                 
                 resp = model_g.generate_content(prompt2)
