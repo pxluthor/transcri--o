@@ -317,17 +317,20 @@ def main():
                 if prompt4 := st.chat_input("Como posso ajudar?"): 
                     
                     st.session_state.chat.append({"role": "user", "text": prompt4})
+
+                    #-----
                     # usando o gemini
-                    resp_mod = model_g.generate_content(prompt2)
-                    response_text = resp_mod.text
+                   # resp_mod = model_g.generate_content(prompt2)
+                   # response_text = resp_mod.text
+                    #-----
                     
                     # usando a groq
-                   # response = client.chat.completions.create(
-                    #    messages=[{"role": "user", "content": prompt4},
-                     #             {"role": "system", "content": st.session_state.transcricao}],
-                      #  model="llama3-70b-8192"
-                    #)
-                    #response_text = response.choices[0].message.content
+                    response = client.chat.completions.create(
+                        messages=[{"role": "user", "content": prompt4},
+                                  {"role": "system", "content": st.session_state.transcricao}],
+                        model="llama3-70b-8192"
+                    )
+                    response_text = response.choices[0].message.content
                     
                     with st.chat_message("assistente"):
                         st.markdown(response_text)
