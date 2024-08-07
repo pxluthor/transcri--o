@@ -211,8 +211,7 @@ def main():
                 st.write("Processando transcrição ...")
                 formatted_transcription = transcription
 
-                prompt2 = f'''Responda sempre em português do Brasil. 
-                            Você trabalha na Leste telecom, o seu trabalho é realizar a transcrição de conversas identificando, transcrevendo e fazendo correções 
+                prompt2 = f'''Você trabalha na Leste telecom, o seu trabalho é realizar a transcrição de conversas identificando, transcrevendo e fazendo correções 
                             de algumas palavras dentro do contexto da fala de cada interlocutor. 
                             Revise a conversa de acordo com o contexto:{formatted_transcription}. Retorne também o tempo correto de cada fala. como no exemplo:
 
@@ -232,6 +231,8 @@ def main():
                             
                             display:
                             Ajuste a transcrição para melhor visualização na tela utilizando quebras de linha
+                            
+                            Responda sempre em português do Brasil, retorne a transcrição completa não faça resumos ou explicações. 
                             '''
                 
                 # teste para verificação de privacidade do gemini.
@@ -260,7 +261,7 @@ def main():
     
                         # Requisição para o modelo Groq
                     response_final = client.chat.completions.create(
-                    messages=[{"role": "user", "content": prompt3}],
+                    messages=[{"role": "user", "content": prompt2}],
                     model="llama3-8b-8192"
                     ).choices[0].message.content
 
