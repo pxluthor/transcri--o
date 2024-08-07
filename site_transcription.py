@@ -26,7 +26,7 @@ AudioSegment.ffmpeg = which("ffmpeg")
 AudioSegment.ffprobe = which("ffprobe")
 
 #chaves API
-api_key_groq = st.secrets["api_keys"]["api_key4"]
+api_key_groq = st.secrets["api_keys"]["api_key3"]
 api_key_gemini = st.secrets["api_keys"]["api_key1"]
 
 # Configuração da API Groq whisper
@@ -38,7 +38,7 @@ model = 'whisper-large-v3'
 
 genai.configure(api_key=api_key_gemini)
 generation_config = {
-    "temperature": 0.7,
+    "temperature": 0.2,
     "top_p": 0.95,
     "top_k": 64,
     "max_output_tokens": 8192,
@@ -54,7 +54,7 @@ safety_settings={
 model_g = genai.GenerativeModel(model_name='models/gemini-1.5-flash-latest', generation_config=generation_config, safety_settings=safety_settings)
 
 # Função para dividir o áudio
-def split_audio(filepath, chunk_length_ms=120000): # 2 minutos
+def split_audio(filepath, chunk_length_ms=180000): # 3 minutos
     audio = AudioSegment.from_file(filepath)  # segmento de audio
     chunks = [audio[i:i + chunk_length_ms] for i in range(0, len(audio), chunk_length_ms)]
     return chunks
@@ -216,23 +216,25 @@ def main():
                             de algumas palavras dentro do contexto da fala de cada interlocutor. 
                             Revise a conversa de acordo com o contexto:{formatted_transcription}. Retorne também o tempo correto de cada fala. como no exemplo:
 
-                            Modelo:
+                            Modelo para transcrição:
                             tempo de fala (tempo real do arquivo)
 
-                            interlocutor1: (fala do interlocutor)(\n).
-                            interlocutor2: (fala do interlocutor)(\n).
+                            interlocutor1: (fala)(\n).
+                            
+                            interlocutor2: (fala)(\n).
                             
                             Retorne a resposta da transcrição conforme o modelo apresentado. 
-                            Use quebras de linha se necesário.
+                            Use quebras de linha.
 
                             contexto:
-                            geralmente é o atendente que inicia a interação com o cliente fazendo a saudação e 
+                            O atendente sempre inicia a interação com o cliente fazendo a saudação e 
                             pergunta como pode ajudar. 
-
-                            Ajuste a transcrição para melhor visualização da interação
+                            
+                            display:
+                            Ajuste a transcrição para melhor visualização na tela utilizando quebras de linha
                             '''
                 
-                # requisição para o modelo do groq
+                # teste para verificação de privacidade do gemini.
 
                 try:
                     resp = model_g.generate_content(prompt2)
@@ -259,7 +261,7 @@ def main():
                         # Requisição para o modelo Groq
                     response_final = client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt3}],
-                    model="llama3-70b-8192"
+                    model="llama3-8b-8192"
                     ).choices[0].message.content
 
                     with st.chat_message("assistente"):
