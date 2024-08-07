@@ -234,27 +234,28 @@ def main():
                             
                             Responda sempre em português do Brasil, retorne a transcrição completa não faça resumos ou explicações. 
                             '''
-                 prompt3 = f'''
-                        realize a transcrição completa de conversa que vem na lista: {formatted_transcription} identificando a fala de cada interlocutore o tempo correto de cada fala. 
-                        siga o modelo de transcrição para a resposta.
+                
+                 prompt3 = f'''realize a transcrição completa de conversa que vem na lista: {formatted_transcription} identificando a fala de cada interlocutore o tempo correto de cada fala. 
+                                siga o modelo de transcrição para a resposta.
 
-                        Modelo para transcrição:
-                        tempo de fala (tempo real do arquivo)
+                                Modelo para transcrição:
+                                tempo de fala (tempo real do arquivo)
                         
-                        interlocutor1: (fala)(\n).
-                        interlocutor2: (fala)(\n).
+                                interlocutor1: (fala)(\n).
+                                interlocutor2: (fala)(\n).
                       
-                        contexto:
-                        conversa de ligação cliente entra em contato com o call center da Leste telecom, empresa de internet 
-                        O atendente sempre inicia a interação com o cliente fazendo a saudação e 
-                        perguntando como pode ajudar. 
+                                contexto:
+                                conversa de ligação cliente entra em contato com o call center da Leste telecom, empresa de internet 
+                                O atendente sempre inicia a interação com o cliente fazendo a saudação e 
+                                perguntando como pode ajudar. 
                         
                      
-                        Utilize quebra de linha para melhorar a apresesntação no PDF. 
-                        Ajuste a transcrição para melhor visualização da interação na tela.
+                                Utilize quebra de linha para melhorar a apresesntação no PDF. 
+                                Ajuste a transcrição para melhor visualização da interação na tela.
 
-                        sempre responda em português do Brasil, Sempre retorne a transcrição completa.
-                    '''
+                                sempre responda em português do Brasil, Sempre retorne a transcrição completa.
+                                '''
+                
                 # teste para verificação de privacidade do gemini.
 
                 try:
