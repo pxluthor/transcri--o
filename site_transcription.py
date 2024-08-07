@@ -235,7 +235,7 @@ def main():
                             Responda sempre em português do Brasil, retorne a transcrição completa não faça resumos ou explicações. 
                             '''
                 
-                 prompt3 = f'''realize a transcrição completa de conversa que vem na lista: {formatted_transcription} identificando a fala de cada interlocutore o tempo correto de cada fala. 
+                prompt3 = f'''realize a transcrição completa de conversa que vem na lista: {formatted_transcription} identificando a fala de cada interlocutore o tempo correto de cada fala. 
                                 siga o modelo de transcrição para a resposta.
 
                                 Modelo para transcrição:
