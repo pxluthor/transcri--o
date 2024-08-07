@@ -18,12 +18,17 @@ from pydub.utils import which
 
 
 # Instala ffmpeg se não estiver presente
-os.system("apt-get update && apt-get install -y ffmpeg")
+#os.system("apt-get update && apt-get install -y ffmpeg")
 
 # Certifica de que o pydub encontra ffmpeg e ffprobe
-AudioSegment.converter = which("ffmpeg")
+#AudioSegment.converter = which("ffmpeg")
+#AudioSegment.ffmpeg = which("ffmpeg")
+#AudioSegment.ffprobe = which("ffprobe")
+
+AudioSegment.converter = which("ffmpeg") 
 AudioSegment.ffmpeg = which("ffmpeg")
 AudioSegment.ffprobe = which("ffprobe")
+
 
 #chaves API
 api_key_groq = st.secrets["api_keys"]["api_key3"]
@@ -181,7 +186,7 @@ def main():
                 
     else:
         #botão upload
-        arquivo_carregado = st.file_uploader("Carregar arquivo de áudio (MP3)")
+        arquivo_carregado = st.file_uploader("Carregar arquivo de áudio (GSM ou MP3)")
 
         if arquivo_carregado:
             st.sidebar.markdown("# PLAY AUDIO 🔉 ")
@@ -192,10 +197,20 @@ def main():
                 return arquivo_carregado.read()
 
             audio_data = carregar_audio(arquivo_carregado)
-            with open("audio_temp.mp3", "wb") as f:
-                f.write(audio_data)
+            
+            # Conversão de GSM para MP3 (se necessário)
+            if arquivo_carregado.name.endswith(".gsm"):
+                temp_filename = "audio_temp.mp3"
+                with open(temp_filename, "wb") as f:
+                    f.write(audio_data)
+                AudioSegment.from_file(temp_filename, format="gsm").export(temp_filename, format="mp3")
+                audio_data = open(temp_filename, "rb").read()
+            else:
+                temp_filename = "audio_temp.mp3"
+                with open(temp_filename, "wb") as f:
+                    f.write(audio_data)
 
-            st.sidebar.audio("audio_temp.mp3", format="audio/mpeg", loop=False)
+            st.sidebar.audio(temp_filename, format="audio/mpeg", loop=False)
             st.sidebar.info("Audio carregado !")
 
 
@@ -206,8 +221,12 @@ def main():
                 st.session_state.transcricao = ""
 
             if not st.session_state.transcricao_feita and st.button("Fazer transcrição"):
-                st.session_state.file_path = "audio_temp.mp3"
+                st.session_state.file_path = temp_filename
                 transcription = transcribe_audio(st.session_state.file_path, model, client)
+
+                with st.expander("Mostrar lista"):
+                    st.write(transcription)
+
                 st.write("Processando transcrição ...")
                 formatted_transcription = transcription
 
@@ -324,7 +343,6 @@ def main():
             if st.session_state.transcricao_feita:
                 if prompt3 := st.chat_input("Como posso ajudar?"): 
                     st.session_state.chat.append({"role": "user", "text": prompt3})
-                    st.session_state.history.append({"role": "user", "text": prompt3})
                     response = client.chat.completions.create(
                         messages=[{"role": "user", "content": prompt3},
                                   {"role": "system", "content": st.session_state.transcricao}],
@@ -334,7 +352,6 @@ def main():
                     with st.chat_message("assistente"):
                         st.markdown(response_text)
                         st.session_state.chat.append({"role": "assistente", "text": response_text})
-                        st.session_state.history.append({"role": "assistente", "text": response_text})
 
 def limpar_chat():
     st.session_state.chat = []
