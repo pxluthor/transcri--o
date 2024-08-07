@@ -324,6 +324,7 @@ def main():
             if st.session_state.transcricao_feita:
                 if prompt3 := st.chat_input("Como posso ajudar?"): 
                     st.session_state.chat.append({"role": "user", "text": prompt3})
+                    st.session_state.history.append({"role": "user", "text": prompt3})
                     response = client.chat.completions.create(
                         messages=[{"role": "user", "content": prompt3},
                                   {"role": "system", "content": st.session_state.transcricao}],
@@ -333,6 +334,7 @@ def main():
                     with st.chat_message("assistente"):
                         st.markdown(response_text)
                         st.session_state.chat.append({"role": "assistente", "text": response_text})
+                        st.session_state.history.append({"role": "assistente", "text": response_text})
 
 def limpar_chat():
     st.session_state.chat = []
