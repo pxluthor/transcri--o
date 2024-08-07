@@ -228,6 +228,8 @@ def main():
                             contexto:
                             O cliente entra em contato por telefone com a central da Leste telecom, geralmente quem inicia a conversa é o atendente que faz a saudação e 
                             pergunta como pode ajudar. 
+
+                            Ajuste a transcrição para melhor visualização da interação
                             '''
                 
                 # requisição para o modelo do groq
@@ -238,14 +240,19 @@ def main():
                 except ValueError as e:
                     st.error("Erro ao processar a resposta do modelo Gemini. Usando o modelo Groq para a transcrição.")    
 
-                    prompt3 = f'''Responda sempre em português do Brasil. 
+                    prompt3 = f'''sempre responda em português do Brasil, Sempre retorne a transcrição completa.
                         Você trabalha na Leste telecom, empresa de internet, realize a transcrição completa de conversa que vem em uma lista: {formatted_transcription} identificando a fala de cada interlocutor. 
                         Revise a conversa de acordo com o contexto. Retorne também o tempo correto de cada fala.  
 
 
                         contexto:
+                        
                         O cliente entra em contato por telefone com a central da Leste telecom, geralmente quem inicia a conversa é o atendente que faz a saudação e 
-                        pergunta como pode ajudar. Utilize quebra de linha se necessário. 
+                        pergunta como pode ajudar. 
+                        
+                        visualização:
+                        Utilize quebra de linha se necessário. 
+                        Ajuste a transcrição para melhor visualização da interação.
                     '''
     
                         # Requisição para o modelo Groq
