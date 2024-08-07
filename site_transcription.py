@@ -226,7 +226,7 @@ def main():
                             Use quebras de linha se necesário.
 
                             contexto:
-                            O cliente entra em contato por telefone com a central da Leste telecom, geralmente quem inicia a conversa é o atendente que faz a saudação e 
+                            geralmente é o atendente que inicia a interação com o cliente fazendo a saudação e 
                             pergunta como pode ajudar. 
 
                             Ajuste a transcrição para melhor visualização da interação
@@ -237,6 +237,7 @@ def main():
                 try:
                     resp = model_g.generate_content(prompt2)
                     response_final = resp.text  # pode causar ValueError se nenhum texto for retornado
+                    
                 except ValueError as e:
                     st.error("Erro ao processar a resposta do modelo Gemini. Usando o modelo Groq para a transcrição.")    
 
@@ -246,8 +247,8 @@ def main():
 
 
                         contexto:
-                        
-                        O cliente entra em contato por telefone com a central da Leste telecom, geralmente quem inicia a conversa é o atendente que faz a saudação e 
+                        Callcenter da Leste Telecom.
+                        geralmente é o atendente que inicia a interação com o cliente fazendo a saudação e 
                         pergunta como pode ajudar. 
                         
                         visualização:
