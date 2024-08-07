@@ -234,35 +234,42 @@ def main():
                             
                             Responda sempre em português do Brasil, retorne a transcrição completa não faça resumos ou explicações. 
                             '''
-                
+                 prompt3 = f'''
+                        realize a transcrição completa de conversa que vem na lista: {formatted_transcription} identificando a fala de cada interlocutore o tempo correto de cada fala. 
+                        siga o modelo de transcrição para a resposta.
+
+                        Modelo para transcrição:
+                        tempo de fala (tempo real do arquivo)
+                        
+                        interlocutor1: (fala)(\n).
+                        interlocutor2: (fala)(\n).
+                      
+                        contexto:
+                        conversa de ligação cliente entra em contato com o call center da Leste telecom, empresa de internet 
+                        O atendente sempre inicia a interação com o cliente fazendo a saudação e 
+                        perguntando como pode ajudar. 
+                        
+                     
+                        Utilize quebra de linha para melhorar a apresesntação no PDF. 
+                        Ajuste a transcrição para melhor visualização da interação na tela.
+
+                        sempre responda em português do Brasil, Sempre retorne a transcrição completa.
+                    '''
                 # teste para verificação de privacidade do gemini.
 
                 try:
-                    resp = model_g.generate_content(prompt2)
+                    resp = model_g.generate_content(prompt3)
                     response_final = resp.text  # pode causar ValueError se nenhum texto for retornado
                     
                 except ValueError as e:
                     st.error("Erro ao processar a resposta do modelo Gemini. Usando o modelo Groq para a transcrição.")    
 
-                    prompt3 = f'''sempre responda em português do Brasil, Sempre retorne a transcrição completa.
-                        Você trabalha na Leste telecom, empresa de internet, realize a transcrição completa de conversa que vem em uma lista: {formatted_transcription} identificando a fala de cada interlocutor. 
-                        Revise a conversa de acordo com o contexto. Retorne também o tempo correto de cada fala.  
-
-
-                        contexto:
-                        Callcenter da Leste Telecom.
-                        geralmente é o atendente que inicia a interação com o cliente fazendo a saudação e 
-                        pergunta como pode ajudar. 
-                        
-                        visualização:
-                        Utilize quebra de linha se necessário. 
-                        Ajuste a transcrição para melhor visualização da interação.
-                    '''
+                   
     
                         # Requisição para o modelo Groq
                     response_final = client.chat.completions.create(
-                    messages=[{"role": "user", "content": prompt2}],
-                    model="llama3-8b-8192"
+                    messages=[{"role": "user", "content": prompt3}],
+                    model="llama3-70b-8192"
                     ).choices[0].message.content
 
                     with st.chat_message("assistente"):
