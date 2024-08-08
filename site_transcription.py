@@ -8,6 +8,7 @@ from groq import Groq
 import google.generativeai as genai
 from docx import Document
 from fpdf import FPDF
+from pydub.silence import detect_nonsilent
 import toml
 
 from pydub import AudioSegment
