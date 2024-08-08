@@ -1,7 +1,4 @@
-#from reportlab.lib.units import cm
-#from reportlab.lib.pagesizes import A4
-#from reportlab.pdfgen import canvas
-#from pathlib import Path
+
 from google.generativeai.types import HarmCategory, HarmBlockThreshold # incluido para privacidade
 
 import os
@@ -18,12 +15,9 @@ from pydub.utils import which
 
 
 # Instala ffmpeg se não estiver presente
-#os.system("apt-get update && apt-get install -y ffmpeg")
+os.system("apt-get update && apt-get install -y ffmpeg")
 
-# Certifica de que o pydub encontra ffmpeg e ffprobe
-#AudioSegment.converter = which("ffmpeg")
-#AudioSegment.ffmpeg = which("ffmpeg")
-#AudioSegment.ffprobe = which("ffprobe")
+
 
 AudioSegment.converter = which("ffmpeg") 
 AudioSegment.ffmpeg = which("ffmpeg")
@@ -59,9 +53,21 @@ safety_settings={
 model_g = genai.GenerativeModel(model_name='models/gemini-1.5-flash-latest', generation_config=generation_config, safety_settings=safety_settings)
 
 # Função para dividir o áudio
-def split_audio(filepath, chunk_length_ms=180000): # 3 minutos
-    audio = AudioSegment.from_file(filepath)  # segmento de audio
-    chunks = [audio[i:i + chunk_length_ms] for i in range(0, len(audio), chunk_length_ms)]
+def split_audio(filepath, chunk_length_ms=180000):  
+    audio = AudioSegment.from_file(filepath)
+    
+    # Detectar partes não silenciosas
+    nonsilent_ranges = detect_nonsilent(audio, min_silence_len=1000, silence_thresh=-70) # silence_thresh (quanto maior o negativo, maior a captura de sons mais baixos)
+
+    # Extrair partes não silenciosas
+    nonsilent_audio = [audio[start:end] for start, end in nonsilent_ranges]
+
+    # Combinar partes não silenciosas em um único segmento
+    combined_audio = sum(nonsilent_audio)
+
+    # Dividir o áudio combinado em partes de tamanho fixo (por exemplo, 3 minutos)
+    chunks = [combined_audio[i:i + chunk_length_ms] for i in range(0, len(combined_audio), chunk_length_ms)]
+    
     return chunks
 
 # converte chunk para texto.
