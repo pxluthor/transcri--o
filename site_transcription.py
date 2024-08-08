@@ -186,7 +186,7 @@ def main():
                 
     else:
         #botão upload
-        arquivo_carregado = st.file_uploader("Carregar arquivo de áudio (GSM ou MP3)")
+        arquivo_carregado = st.sidebar.file_uploader("Carregar arquivo de áudio (GSM ou MP3)")
 
         if arquivo_carregado:
             st.sidebar.markdown("# PLAY AUDIO 🔉 ")
@@ -220,7 +220,7 @@ def main():
             if "transcricao" not in st.session_state:
                 st.session_state.transcricao = ""
 
-            if not st.session_state.transcricao_feita and st.button("Fazer transcrição"):
+            if not st.session_state.transcricao_feita and st.sidebar.button("Fazer transcrição"):
                 st.session_state.file_path = temp_filename
                 transcription = transcribe_audio(st.session_state.file_path, model, client)
 
