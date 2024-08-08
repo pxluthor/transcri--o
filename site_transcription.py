@@ -52,13 +52,14 @@ safety_settings={
 }
 
 model_g = genai.GenerativeModel(model_name='models/gemini-1.5-flash-latest', generation_config=generation_config, safety_settings=safety_settings)
+chunk_length_ms = 2 * 60 * 1000
 
 # Função para dividir o áudio
 def split_audio(filepath, chunk_length_ms=180000):  
     audio = AudioSegment.from_file(filepath)
     
     # Detectar partes não silenciosas
-    nonsilent_ranges = detect_nonsilent(audio, min_silence_len=1000, silence_thresh=-60) # silence_thresh (quanto maior o negativo, maior a captura de sons mais baixos)
+    nonsilent_ranges = detect_nonsilent(audio, min_silence_len=1000, silence_thresh=-70) # silence_thresh (quanto maior o negativo, maior a captura de sons mais baixos)
 
     # Extrair partes não silenciosas
     nonsilent_audio = [audio[start:end] for start, end in nonsilent_ranges]
