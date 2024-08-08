@@ -179,7 +179,7 @@ def main():
             #processamento da pergunta do usuário
             response = client.chat.completions.create(
                 messages=st.session_state.history,
-                model="llama3-8b-8192"
+                model="llama3-70b-8192"
             )
             response_text = response.choices[0].message.content # resposta da IA
 
@@ -228,6 +228,7 @@ def main():
                 st.session_state.transcricao = ""
 
             if not st.session_state.transcricao_feita and st.sidebar.button("Fazer transcrição"):
+                st.write("Realizando o tratamento do audio...")
                 st.session_state.file_path = temp_filename
                 transcription = transcribe_audio(st.session_state.file_path, model, client)
 
